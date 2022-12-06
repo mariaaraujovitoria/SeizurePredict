@@ -6,6 +6,8 @@ from imblearn.over_sampling import SMOTE
 import os
 import numpy as np
 import pandas as pd
+import pickle
+import joblib
 
 from SeizurePredict.filtering import filter_signals, CustomTranformer
 from SeizurePredict.labeling import label_data
@@ -50,7 +52,7 @@ def downsampling(df):
     return all_df
 
 def flatten_dataframe(df):
-    data = np.array([flatten(df.iloc[i:i+LEN_WINDOW_DOWNSAMPLE]) for i in range(0,len(df)-LEN_WINDOW_DOWNSAMPLE, os.environ["OVERLAP"]*SAMPLE_RATE_DOWNSAMPLE)])
+    data = np.array([flatten(df.iloc[i:i+LEN_WINDOW_DOWNSAMPLE]) for i in range(0,len(df)-LEN_WINDOW_DOWNSAMPLE, int(os.environ["OVERLAP"])*SAMPLE_RATE_DOWNSAMPLE)])
     r=data.shape[0]
     c=data.shape[2]
     data = pd.DataFrame(data.reshape(r,c))
@@ -70,17 +72,25 @@ def oversampling(X, y):
     X, y = sm.fit_resample(X, y)
     return X, y
 
-def preprocess(path_raw_data, scaler, patient_number, Fournier=False, type="test"):
-    df = preprocess_and_label(path_raw_data, scaler, patient_number, Fournier)
+def preprocess(path_raw_data, scaler, patient_number, Fourier=False, type="test"):
+    df = preprocess_and_label(path_raw_data, scaler, patient_number, Fourier)
     df = downsampling(df)
     df = flatten_dataframe(df)
     X,y = create_x_and_y(df)
     return X,y
 
+def load_model():
+    model = joblib.load(os.environ.get("MODEL_PATH"))
+    return model
 
 
 if __name__ == "__main__":
     # readcsv
-    X_test, y_test = preprocess(os.environ["PATH_TEST_DATA"], CustomTranformer(), int(os.environ["PATIENCE_TEST_NUMBER"]), Fournier=True)
-    X_test.to_csv("Xtest5_preproc.csv", index = False)
-    y_test.to_csv("ytest5_preproc.csv", index = False)
+    model = load_model()
+    X_test, y_test = preprocess(os.environ["PATH_TEST_DATA"], CustomTranformer(), int(os.environ["PATIENCE_TEST_NUMBER"]), Fourier=False)
+    #X_test, y_test = preprocess('/home/lee/code/mariaaraujovitoria/SeizurePredict/raw_data/user_data/eeg5.edf', CustomTranformer(), int(os.environ["PATIENCE_TEST_NUMBER"]), Fourier=False)
+
+    # print(X_test)
+    print(model.predict(X_test))
+    # X_test.to_csv("X5_preproc_noF.csv", index = False)
+    # y_test.to_csv("y5_preproc_noF.csv", index = False)

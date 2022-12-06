@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-from params import THRESHOLD
+from SeizurePredict.params import THRESHOLD
 ## -- FEATURE ENGINEERING --
 
 def flatten(window_df):
