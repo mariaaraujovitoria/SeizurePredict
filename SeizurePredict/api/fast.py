@@ -33,8 +33,8 @@ def predict_seizure(path: str):
     X, y = preprocess(path, CustomTranformer(), int(os.environ["PATIENCE_TEST_NUMBER"]), Fourier=False)
     model = app.state.model
     y_pred = model.predict(X)
-    raw_signal = signals[16][384000:500000]
-    return {'result':str(y_pred), 'signal': raw_signal.tolist()}
+    raw_signal = signals[16][256*1500:256*1900]
+    return {'result':y_pred[(150-1)*2:(190-1)*2:2].tolist(), 'signal': raw_signal.tolist()}
 
 @app.get("/")
 def root():
