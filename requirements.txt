@@ -8,6 +8,8 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
+pyedflib
+scipy
 
 # tests/linter
 black
@@ -19,7 +21,6 @@ yapf
 # API
 gcsfs
 google-cloud-storage
-mlflow
 s3fs
 
 # utilities
@@ -28,4 +29,9 @@ joblib
 memoized-property
 termcolor
 
-tensorflow==2.10
+
+fastapi
+uvicorn
+
+python-multipart
+imbalanced-learn
