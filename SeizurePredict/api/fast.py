@@ -23,7 +23,8 @@ app.state.model = load_model()
 
 @app.post('/upload_file/')
 async def upload_file(file: UploadFile):
-    path = Path('/home/lee/code/mariaaraujovitoria/SeizurePredict/raw_data/user_data') / file.filename
+    home_path = os.path.join(os.getcwd(), "SeizurePredict","api","user_data")
+    path = Path(home_path) / file.filename
     size = path.write_bytes(await file.read())
     return {'file': path, 'bytes': size}
 
